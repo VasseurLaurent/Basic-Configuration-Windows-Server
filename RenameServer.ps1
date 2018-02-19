@@ -1,32 +1,28 @@
 
-Import-LocalizedData -BaseDirectory Z:\Script  -FileName Data.psd1 -BindingVariable "data"
+# Module file : C:\Windows\System32\WindowsPowerShell\v1.0\Modules\BasicConfiguration
+
+Import-Module BasicConfiguration
+Import-LocalizedData -BaseDirectory Z:\Script\Basic-Configuration-Windows-Server -FileName Data.psd1 -BindingVariable "data"
 
 $stateComputername = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -Expand Name
+
 $Logfile = $data.Logfile
-
-Function LogWrite
-{
-   Param ([string]$logstring)
-
-   Add-content $Logfile -value $logstring
-}
-
+Write-Output($Logfile)
 
 if ($data.ComputerName.CompareTo($stateComputername) ) {
 
-    LogWrite("Computer Name unchanged")
+    LogWrite $Logfile "Computer Name unchanged"
 
 }
 else {
 
     try {
         Rename-Computer -NewName $computerName -LocalCredential Administrateur -Restart
-        LogWrite("Computer Name changed")
+        LogWrite $Logfile "Computer Name changed"
     }
     catch {
-        LogWrite("Error : Computer Name unchanged")
+        LogWrite $Logfile "Error : Computer Name unchanged"
     }
-    
 
 }
 
