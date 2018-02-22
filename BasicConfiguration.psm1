@@ -4,7 +4,26 @@ Function LogWrite()
     Param
     (
         [string]$Logfile,
-        [string]$logstring
+        [string]$Logstring
     )
-   Add-Content -Path $Logfile -Value $logstring
+   Add-Content -Path $Logfile -Value ((Get-Date).ToString() + " : "+ $Logstring)
+}
+
+Function InitializeLog()
+{
+    Param
+    (
+        [string]$Logfile
+    )
+    Write-Output $Logfile
+    LogWrite $Logfile "==================================== EXECUTING SCRIPT =============================================="
+}
+
+Function EndLog()
+{
+    Param
+    (
+        [string]$LogFile
+    )
+    LogWrite $LogFile "===================================== END SCRIPT ===================================================="
 }
