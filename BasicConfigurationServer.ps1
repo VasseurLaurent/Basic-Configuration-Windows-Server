@@ -11,7 +11,7 @@ Import-LocalizedData -BaseDirectory Z:\Script\Basic-Configuration-Windows-Server
 
 # Configure network interface 
 
-$stateIpAdress = Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex 2 | Select-Object -Expand IpAddress 
+$stateIpAdress = Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Ethernet0 | Select-Object -Expand IpAddress 
 
 if ($data.IpAddress -eq ($stateIpAdress) ) {
     LogWrite $data.Logfile "Ip Address unchanged"
@@ -29,26 +29,20 @@ else {
     }
 }
 
+# Remote Desktop Connection
 
-
-# Enable RDP connection 
-
-if ((Get-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server').fDenyTSConnections -eq 1) {
-    LogWrite $data.Logfile "Rdp connection already allowed"
-}
-elseif ((Get-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp').UserAuthentication -eq 1){
-    LogWrite $data.Logfile "Rdp secured connection already allowed"
-}
-else {
+if (Get-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server') {
     try {
-        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1 -ErrorAction SilentlyContinue
-        LogWrite $data.Logfile "Rdp configured"
-        Enable-NetFirewallRule -DisplayGroup "Remote Desktop" 
-        LogWrite $data.Logfile "Firewall rules for RDP configured"
+        Set-RemoteDesktopConfig
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        LogWrite $data.LogFile "RDP configured"
     }
     catch {
-        LogWrite $data.Logfile "Error : Rdp not configured"
+        LogWrite $data.LogFile "ERROR : RDP no configured"
     }
+}
+else {
+    LogWrite $data.LogFile "RDP Already configured"
 }
 
 # Name server
@@ -63,7 +57,7 @@ if ($data.ComputerName -eq ($stateComputername)) {
 else {
 
     try {
-        Rename-Computer -NewName $computerName -LocalCredential Administrateur -Restart
+        Rename-Computer -NewName $data.ComputerName -LocalCredential Administrateur -Restart
         LogWrite $data.Logfile "Computer Name changed"
     }
     catch {
