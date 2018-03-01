@@ -28,7 +28,7 @@ Function EndLog()
     LogWrite $LogFile "===================================== END SCRIPT ===================================================="
 }
 
-Function Set-RemoteDesktopConfig 
+Function Set-RemoteDesktopConfig() 
 
 {Param ([switch]$LowSecurity, [switch]$disable) 
  if ($Disable) {
