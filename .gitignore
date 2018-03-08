@@ -1,1 +1,4 @@
-Data.psd1
+BasicConfiguration/Data.psd1
+DhcpServer/Data.psd1
+BasicConfiguration/setup.log
+DhcpServer/dhcp.log

@@ -6,7 +6,7 @@ Function LogWrite()
         [string]$Logfile,
         [string]$Logstring
     )
-   Add-Content -Path $Logfile -Value ((Get-Date).ToString() + " : "+ $Logstring)
+   Add-Content -Path $Logfile -Value ((Get-Date).ToString() + " : " + $Logstring)
 }
 
 Function InitializeLog()

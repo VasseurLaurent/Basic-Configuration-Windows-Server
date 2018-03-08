@@ -2,7 +2,7 @@
 # Module file : C:\Windows\System32\WindowsPowerShell\v1.0\Modules\BasicConfiguration
 
 Import-Module BasicConfiguration
-Import-LocalizedData -BaseDirectory Z:\Script\Basic-Configuration-Windows-Server -FileName Data.psd1 -BindingVariable "data"
+Import-LocalizedData -BaseDirectory Z:\Script\Powershell-Configuration\BasicConfiguration -FileName Data.psd1 -BindingVariable "data"
 
 
  #Initialize LogFile
