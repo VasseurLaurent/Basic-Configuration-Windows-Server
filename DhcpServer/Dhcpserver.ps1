@@ -1,8 +1,9 @@
 
-Import-LocalizedData -BaseDirectory Z:\Script\Powershell-Configuration\DhcpServer -FileName Data.psd1 -BindingVariable "data"
 Import-Module BasicConfiguration
 
  #Initialize LogFile
+
+$data = Import-PowerShellDataFile -Path .\Data.psd1
 
  InitializeLog $data.Logfile
 
@@ -15,10 +16,7 @@ if ((Get-WindowsFeature -Name dhcp | Select-Object -Expand "InstallState") -eq "
         netsh dhcp add securitygroups
         Restart-Service DhcpServer
         Set-ItemProperty -Path 'registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ServerManager\Roles\12' -Name ConfigurationState -Value 2
-
-        # Range creation
-        Add-DhcpServerv4Scope -name $data.NameRange -StartRange $data.StartRange -EndRange $data.EndRange -SubnetMask $data.SubnetMaskRange -State $data.StateRange
-
+        
         LogWrite $data.Logfile "DHCP installed and ready to use"
         
     }
@@ -33,6 +31,23 @@ elseif((Get-WindowsFeature -Name dhcp | Select-Object -Expand "InstallState") -e
 
 else {
     LogWrite $data.Logfile "ERROR : Feature not found"
+}
+
+# Range creation
+try {
+    foreach($range in $data.Range.Values){
+        if((Get-DhcpServerv4Scope | Select-Object -Property StartRange | Where-Object {$_.StartRange -eq $data.Range.Range1.StartRange} | Measure-Object | Select-Object -Expand Count) -eq 0){
+
+            Add-DhcpServerv4Scope -name $range.NameRange -StartRange $range.StartRange -EndRange $range.EndRange -SubnetMask $range.SubnetMaskRange -State $range.StateRange
+        }
+        else {
+            LogWrite $data.LogFile ("WARNING : Range " + $data.NameRange + "Already Setup ")
+        }
+        
+    }
+}
+catch{
+    LogWrite $data.Logfile "ERROR : Range not created"
 }
 
 EndLog $data.LogFile
