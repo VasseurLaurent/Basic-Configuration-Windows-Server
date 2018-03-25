@@ -11,6 +11,6 @@ Into this repository you will find scripts for :
 * Change Name server --> BasicConfiguration
 * Install and configure DHCP services --> Dhcpserver
 
-If you like my work and wants to know more about me : 
+If you like my work and want to know more about me : 
 * [Linkedin](https://www.linkedin.com/in/laurent-vasseur-b87b60130/)
 * Email : vasseur.laurent@outlook.com
